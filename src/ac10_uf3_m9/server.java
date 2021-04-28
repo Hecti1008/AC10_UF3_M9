@@ -29,7 +29,7 @@ public class server {
                 int clients = 0;
                 int numClients;
                 Thread thread;
-                ServidorFils fil;
+                servidorFils fil;
                 
                 System.out.println("Numero dels clients que vols? ");
                 numClients = teclat.nextInt();
@@ -41,7 +41,7 @@ public class server {
                             Socket clientConnectat = servidor.accept();
                             clients++;
                             
-                            fil = new ServidorFils(servidor, clientConnectat);
+                            fil = new servidorFils(servidor, clientConnectat);
                             thread = new Thread(fil);
                             thread.start();
                         }catch (SocketException e){
