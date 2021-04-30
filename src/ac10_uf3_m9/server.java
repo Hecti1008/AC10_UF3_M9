@@ -25,32 +25,45 @@ public class server {
 		int numPort = 60000;
 		ServerSocket servidor = new ServerSocket(numPort);
                 
-                //Variable per comptar els clients
-                int clients = 0;
-                int numClients;
-                Thread thread;
-                servidorFils fil;
+                //Variable per comptar els clients               
+                int numClients;                               
                 
                 System.out.println("Numero dels clients que vols? ");
                 numClients = teclat.nextInt();
                 
+                Socket[] clientConnectat = new Socket[numClients];	
+                servidorFils[] arrayRunnable = new servidorFils[numClients];	
+                Thread[] arrayThread = new Thread[numClients];
+                
                     //El Servidor agafa els clients que li posem per teclat
-                    while ( clients < numClients) {
-                        try {
-                            System.out.println("Esperant connexió... ");
-                            Socket clientConnectat = servidor.accept();
-                            clients++;
-                            
-                            fil = new servidorFils(servidor, clientConnectat);
-                            thread = new Thread(fil);
-                            thread.start();
-                        }catch (SocketException e){
-                                System.out.println("Error");
-                        }catch (IOException s) {
-                                s.printStackTrace();
-                            }
-                    }   
-            servidor.close();
-            teclat.close();
+                    for (int i = 0; i < arrayRunnable.length; i++) {	
+                    	
+                    boolean noFunciona = true;	
+                    	
+                    Socket sortidaClient = null;	
+                    try {	
+                        sortidaClient = servidor.accept();	
+                    }catch(SocketException e){	
+                        noFunciona = false;	
+                    }  	
+                    	
+                        boolean stop = false;	
+                        	
+                        for (int j=0; j<clientConnectat.length; j++) {	
+                            	
+                            if(clientConnectat[i] == null && stop == false) {	
+                                clientConnectat[i] = sortidaClient;	
+                                stop = true;	
+                            }	
+                            	
+                        }	
+                	
+                        if(noFunciona) { 
+                            System.out.println("Esperant una conexio... ");
+                            arrayRunnable[i] = new servidorFils(servidor, clientConnectat, sortidaClient);	
+                            arrayThread[i] = new Thread ((Runnable) arrayRunnable[i]);	
+                            arrayThread[i].start();
+                        }
+                    }
 	}
 }
