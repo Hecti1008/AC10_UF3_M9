@@ -20,46 +20,84 @@ import java.net.SocketException;
 public class servidorFils implements Runnable {
     ServerSocket Servidor;
     String cadena = "";
-    Socket clientConnectat;
-    static int clients = 0;
+    Socket[] clientConnectat;
+    static int clients;
+    Socket client;
 
-    public servidorFils(ServerSocket servidor, Socket clientConnectat) {
+    public servidorFils(ServerSocket servidor, Socket[] clientConnectat, Socket sortidaClient) {
         this.Servidor = servidor;
         this.clientConnectat = clientConnectat;
+        this.clients ++;
+        this.client = sortidaClient;
     }
     
         public void run(){
-            try {
-                                clients++;
+            boolean stop = false;
+            while(!stop) {
+            
+                try {
+                                PrintWriter fsortida = null;
+                                BufferedReader fentrada = null;
 
-                                System.out.println("Client " + clients + " connectat... ");
-
+                                System.out.println("Client " + this.clients + " connectat... ");
+                                
+                                try {
                                 //FLUX DE SORTIDA AL CLIENT
-                                PrintWriter fsortida = new PrintWriter(clientConnectat.getOutputStream(), true);
+                                fsortida = new PrintWriter(this.client.getOutputStream(), true);
 
 
                                 //FLUX D'ENTRADA DEL CLIENT
-                                BufferedReader fentrada = new BufferedReader(new InputStreamReader(clientConnectat.getInputStream()));
+                                 fentrada = new BufferedReader(new InputStreamReader(this.client.getInputStream()));
 
                                 //Missatge quan el client conecta amb el servidor
                                 fsortida.println("Connexió amb client: " + clients);
-                                while ((cadena = fentrada.readLine()) != null) {
-
-                                        fsortida.println(cadena);
-                                        System.out.println("Rebent: "+cadena);
-                                        if (cadena.equals("*")) break;
-
+                                if ((cadena = fentrada.readLine()) != null) { 
+                                    System.out.println("Nom del client " + this.client + ": " + cadena);
                                 }
+                                
+                                }catch (SocketException e) {
+                                    stop = true;
+                                }
+                                
+                                while (!stop) {
+                                    try {
+                                        cadena = fentrada.readLine();                                        
+                                    }catch (SocketException e) {
+                                        stop = true;
+                                    }
+                                    if (cadena == null || cadena.equals("")) {
+                                        stop = true;
+                                    }
+                                     if(!stop) {
+                                         fsortida.println(cadena);
+                                     }
+                                     
+                                     if (cadena != null) {
+                                            for (int i = 0; i < clientConnectat.length; i++) {
+                                                if(clientConnectat[i] != null)  {
+                                                   fsortida = new PrintWriter(this.clientConnectat[i].getOutputStream(), true);
+                                                   fsortida.println(cadena);
+                                                    
+                                                }
+                                            }
+                                     }
+                                }
+                                         System.out.println("Rebent misatge: " + cadena);
 
                                 //TANCAR STREAMS I SOCKETS
-                                System.out.println("Tancant connexió... ");
+                                try {
                                 fentrada.close();
-                                fsortida.close();
-                                clientConnectat.close();
-                            }catch (SocketException e){
-                                System.out.println("Error");
-                            }catch (IOException s) {
+                                fsortida.close();                               
+                            }catch (NullPointerException e){
+                                
+                            }
+                                this.Servidor.close();
+                                this.client.close();
+                                     
+                               }catch (IOException s) {
                                 s.printStackTrace();
                             }
+        }
+            
         }
 }
