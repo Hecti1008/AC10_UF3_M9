@@ -49,7 +49,7 @@ public class client implements Runnable {
         //Lectura teclat
         name = in.readLine();
 
-        while (name != null || name.equals("")) {
+        while (name == null || name.equals("")) {
 
             System.out.println("Error al introduir el nom, torna a intentar: ");
             name = in.readLine();
@@ -59,11 +59,14 @@ public class client implements Runnable {
         Runnable run = new client(client);
         Thread clientEnter = new Thread(run);
 
+        fsortida.println(name);
+        clientEnter.start();
+
         String cadena, eco = "";
-        System.out.println("Missatge pel chat: ");
+        System.out.println("Missatge a enviar: ");
         cadena = in.readLine();
 
-        while (cadena != null && (!cadena.equals("(exit)"))) {
+        while (cadena != null && (!cadena.equals("_exit"))) {
 
             fsortida.println(name + ": " + cadena);
             eco = fentrada.readLine();
@@ -95,7 +98,7 @@ public class client implements Runnable {
                 BufferedReader fentrada = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 String enter = fentrada.readLine();
 
-                if (enter == null || enter.equals("(exit)") || enter.equals("null")) {
+                if (enter == null || enter.equals("_exit") || enter.equals("null")) {
                     notFollow();
                 } else {
                     System.out.println(enter);

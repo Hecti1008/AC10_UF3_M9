@@ -42,6 +42,7 @@ public class server {
             boolean noFunciona = true;
 
             Socket sortidaClient = null;
+
             try {
                 sortidaClient = servidor.accept();
             } catch (SocketException e) {

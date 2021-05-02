@@ -52,7 +52,7 @@ public class servidorFils implements Runnable {
                     //Missatge quan el client conecta amb el servidor
                     fsortida.println("Connexió amb client: " + clients);
                     if ((cadena = fentrada.readLine()) != null) {
-                        System.out.println("Nom del client " + this.client + ": " + cadena);
+                        System.out.println("Nom del client " + this.clients + ": " + cadena);
                     }
 
                 } catch (SocketException e) {
@@ -70,14 +70,14 @@ public class servidorFils implements Runnable {
                     }
                     if (!stop) {
                         fsortida.println(cadena);
-                    }
 
-                    if (cadena != null) {
-                        for (int i = 0; i < clientConnectat.length; i++) {
-                            if (clientConnectat[i] != null) {
-                                fsortida = new PrintWriter(this.clientConnectat[i].getOutputStream(), true);
-                                fsortida.println(cadena);
+                        if (cadena != null) {
+                            for (int i = 0; i < clientConnectat.length; i++) {
+                                if (clientConnectat[i] != null) {
+                                    fsortida = new PrintWriter(this.clientConnectat[i].getOutputStream(), true);
+                                    fsortida.println(cadena);
 
+                                }
                             }
                         }
                     }
