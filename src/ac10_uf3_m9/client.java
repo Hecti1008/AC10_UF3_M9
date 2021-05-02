@@ -28,7 +28,7 @@ public class client implements Runnable {
     
     public client(Socket client) {
         this.client = client;
-    
+    }
         public static void main (String[] args) throws Exception {
 		
 		String host = "localhost";
@@ -55,17 +55,55 @@ public class client implements Runnable {
                     name = in.readLine();
 			
 		}
-		
-		fsortida.close();
+                
+                Runnable run = new client(client);
+                Thread clientEnter = new Thread(run);
+                
+                String cadena, eco = "";
+                System.out.println("Missatge pel chat: ");
+                cadena = in.readLine();
+                
+                while (cadena != null && (!cadena.equals("(exit)"))) {
+
+                            fsortida.println(name + ": " + cadena);
+                            eco = fentrada.readLine();
+                            System.out.println(" =>Eco: "+eco);
+                            cadena = in.readLine();
+                            
+                            if (cadena == null || cadena.equals("")) {
+                                fsortida.print(cadena);
+                            }
+                    }
+                
+                notFollow();
+                fsortida.close();
 		fentrada.close();
 		System.out.println("Finalització de l'enviament...");
 		in.close();
 		client.close();
-		
-	}
-		
-}
-    
-
-    
-
+        }
+                public static void notFollow() {
+                    follow = false;
+                }
+                
+                @Override
+                public void run() {
+                    while (follow == true) {
+                      try {
+                          
+                BufferedReader fentrada = new BufferedReader (new InputStreamReader(client.getInputStream()));
+                String enter = fentrada.readLine();
+                
+                if(enter == null || enter.equals("(exit)") || enter.equals("null")) {
+                    notFollow();
+                }else{
+                    System.out.println(enter);
+                }
+            }catch(SocketException e){
+                
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
+        }  
+                    }
+                }
