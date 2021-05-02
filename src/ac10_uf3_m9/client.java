@@ -33,7 +33,7 @@ public class client implements Runnable {
 		
 		String host = "localhost";
 		int port = 60000;//Port remot
-		Socket client = new Socket(host, port);
+		client = new Socket(host, port);
 		
 		//FLUX fDE SORTIDA AL SERVIDOR
 		PrintWriter fsortida = new PrintWriter(client.getOutputStream(), true);
@@ -44,21 +44,15 @@ public class client implements Runnable {
 		//FLUX PER A ENTRADA ESTÀNDARD
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		
-		String cadena, eco = "";
-		System.out.println("Introdueix la cadena: ");
+		String name = "";
+		System.out.println("Introdueix el teu nom: ");
 		//Lectura teclat
-		cadena = in.readLine();
+		name = in.readLine();
 		
-		while (cadena != null) {
+		while (name != null || name.equals("")) {
 			
-			//Enviament cadena al servidor
-			fsortida.println(cadena);
-			//Rebuda cadena del servidor
-			eco = fentrada.readLine();
-			System.out.println("  =>ECO: "+eco);
-			//Lectura del teclat
-			cadena = in.readLine();
-			
+                    System.out.println("Error al introduir el nom, torna a intentar: ");
+                    name = in.readLine();
 			
 		}
 		
